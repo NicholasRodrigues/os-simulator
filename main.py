@@ -7,10 +7,10 @@ class Processo:
         :param instrucoes: Lista de instruções que o processo deve executar.
         """
         self.pid = pid
-        self.estado = 'pronto'
-        self.contador_programa = 0
-        self.registros = {}
-        self.memoria_alocada = []
+        self.estado = 'pronto'  # Estado inicial do processo
+        self.contador_programa = 0  # Aponta para a próxima instrução a ser executada
+        self.registros = {}  # Simulação de registros do processo
+        self.memoria_alocada = []  # Simulação de memória alocada para o processo
         self.instrucoes = instrucoes
 
     def __str__(self):
@@ -33,8 +33,8 @@ class GerenciadorProcessos:
         """
         Inicializa o gerenciador de processos, responsável por criar e gerenciar processos.
         """
-        self.processos = {}
-        self.pid_counter = 1
+        self.processos = {}  # Dicionário que mapeia PIDs para processos
+        self.pid_counter = 1  # Contador para gerar novos PIDs únicos
 
     def criar_processo(self, instrucoes):
         """
@@ -47,6 +47,7 @@ class GerenciadorProcessos:
         processo = Processo(pid, instrucoes)
         self.processos[pid] = processo
         self.pid_counter += 1
+        print(f"Processo {pid} criado com sucesso!")
         return processo
 
     def terminar_processo(self, pid):
@@ -58,6 +59,7 @@ class GerenciadorProcessos:
         if pid in self.processos:
             self.processos[pid].estado = 'terminado'
             del self.processos[pid]
+            print(f"Processo {pid} foi terminado e removido do gerenciador.")
 
     def obter_processo(self, pid):
         """
@@ -74,6 +76,7 @@ class GerenciadorProcessos:
 
         :return: Lista de strings representando o estado de cada processo.
         """
+        print("Listando todos os processos gerenciados...")
         return [str(processo) for processo in self.processos.values()]
 
 
@@ -84,7 +87,7 @@ class Escalonador:
 
         :param politica: Política de escalonamento a ser utilizada ('FIFO', 'RoundRobin', 'SJF').
         """
-        self.fila_prontos = []
+        self.fila_prontos = []  # Fila de processos prontos para execução
         self.politica = politica
 
     def adicionar_processo(self, processo):
@@ -94,6 +97,7 @@ class Escalonador:
         :param processo: O processo a ser adicionado.
         """
         self.fila_prontos.append(processo)
+        print(f"Processo {processo.pid} adicionado à fila de prontos.")
 
     def selecionar_proximo_processo(self):
         """
@@ -102,15 +106,19 @@ class Escalonador:
         :return: O próximo processo a ser executado ou None se não houver processos prontos.
         """
         if not self.fila_prontos:
+            print("A fila de prontos está vazia, nenhum processo disponível para execução.")
             return None
 
         if self.politica == 'FIFO':
+            print("Selecionando próximo processo com política FIFO...")
             return self.fila_prontos.pop(0)
         elif self.politica == 'RoundRobin':
+            print("Selecionando próximo processo com política RoundRobin...")
             processo = self.fila_prontos.pop(0)
             self.fila_prontos.append(processo)
             return processo
         elif self.politica == 'SJF':
+            print("Selecionando próximo processo com política SJF...")
             self.fila_prontos.sort(key=lambda p: len(p.instrucoes))
             return self.fila_prontos.pop(0)
         else:
@@ -140,6 +148,7 @@ class SimuladorExecucao:
 
         if processo.contador_programa >= len(processo.instrucoes):
             processo.estado = 'terminado'
+            print(f"Processo {processo.pid} terminou a execução de todas as instruções.")
 
     def executar_instrucao(self, processo, instrucao):
         """
@@ -149,11 +158,12 @@ class SimuladorExecucao:
         :param instrucao: A instrução a ser executada.
         """
         if instrucao == 'NOP':
-            pass  # Instrução de No Operation (não faz nada)
+            print(f"Processo {processo.pid}: NOP - Nenhuma operação realizada.")
         elif instrucao == 'END':
             processo.estado = 'terminado'
+            print(f"Processo {processo.pid}: END - Processo finalizado.")
         else:
-            print(f"Executando {instrucao} no processo {processo.pid}")
+            print(f"Processo {processo.pid}: Executando instrução {instrucao}")
 
     def ciclo_de_execucao(self):
         """
@@ -162,7 +172,7 @@ class SimuladorExecucao:
         while True:
             processo = self.escalonador.selecionar_proximo_processo()
             if not processo:
-                print("Nenhum processo para executar.")
+                print("Nenhum processo para executar. Ciclo de execução encerrado.")
                 break
 
             if processo.estado == 'pronto':
@@ -172,12 +182,13 @@ class SimuladorExecucao:
                 print(f"Processo {processo.pid} terminou")
 
 
+# Funções de teste
 def teste_criar_processo():
     gerenciador = GerenciadorProcessos()
     processo = gerenciador.criar_processo(['NOP', 'END'])
     assert processo.pid == 1
     assert processo.estado == 'pronto'
-    print("Teste criar_processo passou.")
+    print("Teste criar_processo passou.\n")
 
 def teste_escalonador_fifo():
     gerenciador = GerenciadorProcessos()
@@ -193,7 +204,7 @@ def teste_escalonador_fifo():
     assert processo == p1
     processo = escalonador.selecionar_proximo_processo()
     assert processo == p2
-    print("Teste escalonador_fifo passou.")
+    print("Teste escalonador_fifo passou.\n")
 
 def teste_simulador_execucao():
     gerenciador = GerenciadorProcessos()
@@ -210,15 +221,14 @@ def teste_simulador_execucao():
 
     assert p1.estado == 'terminado'
     assert p2.estado == 'terminado'
-    print("Teste simulador_execucao passou.")
+    print("Teste simulador_execucao passou.\n")
 
 # Execução da suíte de testes
 def executar_suite_testes():
-    print("Iniciando suíte de testes...")
+    print("Iniciando suíte de testes...\n")
     teste_criar_processo()
     teste_escalonador_fifo()
     teste_simulador_execucao()
-    print("Todos os testes passaram com sucesso.")
+    print("Todos os testes passaram com sucesso.\n")
 
 executar_suite_testes()
-
