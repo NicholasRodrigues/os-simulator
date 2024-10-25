@@ -1,0 +1,5 @@
+CREATE_FILE "test_file.txt"
+WRITE_FILE "test_file.txt" "Hello, World!"
+READ_FILE "test_file.txt"
+DELETE_FILE "test_file.txt"
+END

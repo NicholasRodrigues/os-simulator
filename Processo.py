@@ -1,16 +1,17 @@
 class Processo:
-    def __init__(self, pid, instrucoes):
+    def __init__(self, pid, instrucoes, memoria_alocada):
         """
         Inicializa um novo processo.
 
         :param pid: Identificador único do processo.
         :param instrucoes: Lista de instruções que o processo deve executar.
+        :param memoria_alocada: Lista de endereços de memória alocados para o processo.
         """
         self.pid = pid
         self.estado = 'pronto'  # Estado inicial do processo
         self.contador_programa = 0  # Aponta para a próxima instrução a ser executada
         self.registros = {'R0': 0, 'R1': 0, 'R2': 0, 'R3': 0}  # Registros do processo
-        self.memoria_alocada = {}  # Memória alocada para o processo
+        self.memoria_alocada = {addr: 0 for addr in memoria_alocada}  # Memória alocada para o processo
         self.instrucoes = instrucoes
         self.labels = self._process_labels()  # Mapeamento de labels para índices de instrução
 

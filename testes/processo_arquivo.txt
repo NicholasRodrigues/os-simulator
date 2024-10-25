@@ -1,0 +1,5 @@
+CREATE_FILE "teste.txt"
+WRITE_FILE "teste.txt" "Conteudo de teste"
+READ_FILE "teste.txt"
+DELETE_FILE "teste.txt"
+END

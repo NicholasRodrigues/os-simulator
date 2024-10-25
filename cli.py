@@ -1,10 +1,22 @@
+# cli.py
+
 from GerenciadorProcessos import GerenciadorProcessos
 from Escalonador import Escalonador
 from SimuladorExecucao import SimuladorExecucao
+from GerenciadorMemoria import GerenciadorMemoria
+from GerenciadorIO import GerenciadorIO
+from SistemaArquivos import SistemaArquivos
+from GameEngine import GameEngine
+
 def cli():
-    gerenciador = GerenciadorProcessos()
+    gerenciador_memoria = GerenciadorMemoria()
+    gerenciador_io = GerenciadorIO()
+    sistema_arquivos = SistemaArquivos()
+    game_engine = GameEngine()
+
+    gerenciador = GerenciadorProcessos(gerenciador_memoria)
     escalonador = Escalonador(politica='FIFO')  # Você pode mudar a política aqui
-    simulador = SimuladorExecucao(escalonador)
+    simulador = SimuladorExecucao(escalonador, gerenciador_io, sistema_arquivos, game_engine)
 
     while True:
         command = input("VM> ").strip()
@@ -23,7 +35,8 @@ def cli():
                 with open(arquivo, 'r') as f:
                     instrucoes = [line.strip() for line in f if line.strip()]
                 processo = gerenciador.criar_processo(instrucoes)
-                escalonador.adicionar_processo(processo)
+                if processo:
+                    escalonador.adicionar_processo(processo)
             except FileNotFoundError:
                 print(f"Arquivo {arquivo} não encontrado.")
             except Exception as e:
@@ -40,13 +53,15 @@ def cli():
             for p in processos:
                 print(p)
         elif cmd == 'monitor_resources':
-            # Simulação simples de monitoramento
-            print("Monitoramento de Recursos não implementado.")
+            # Simulação de monitoramento
+            print("Monitoramento de Recursos:")
+            print(f"Memória utilizada: {len(gerenciador_memoria.alocacoes)} processos alocados.")
+            print(f"Processos bloqueados: {list(gerenciador_io.processos_bloqueados.keys())}")
         elif cmd == 'exit':
             print("Encerrando VM.")
             break
         else:
             print(f"Comando '{cmd}' não reconhecido.")
-            
+
 if __name__ == "__main__":
     cli()

@@ -2,7 +2,7 @@ class Escalonador:
     def __init__(self, politica='FIFO'):
         """
         Inicializa o escalonador de processos.
-    
+
         :param politica: Política de escalonamento a ser utilizada ('FIFO', 'RoundRobin', 'SJF').
         """
         self.fila_prontos = []  # Fila de processos prontos para execução
@@ -11,7 +11,7 @@ class Escalonador:
     def adicionar_processo(self, processo):
         """
         Adiciona um processo à fila de prontos.
-    
+
         :param processo: O processo a ser adicionado.
         """
         self.fila_prontos.append(processo)
@@ -20,7 +20,7 @@ class Escalonador:
     def selecionar_proximo_processo(self):
         """
         Seleciona o próximo processo a ser executado, baseado na política de escalonamento.
-    
+
         :return: O próximo processo a ser executado ou None se não houver processos prontos.
         """
         if not self.fila_prontos:
@@ -45,8 +45,20 @@ class Escalonador:
     def remover_processo(self, pid):
         """
         Remove um processo da fila de prontos pelo seu PID.
-    
+
         :param pid: Identificador do processo a ser removido.
         """
         self.fila_prontos = [p for p in self.fila_prontos if p.pid != pid]
         print(f"Processo {pid} removido da fila de prontos.")
+
+    def obter_processo(self, pid):
+        """
+        Obtém um processo na fila de prontos pelo seu PID.
+
+        :param pid: Identificador do processo.
+        :return: O processo correspondente ou None se não encontrado.
+        """
+        for processo in self.fila_prontos:
+            if processo.pid == pid:
+                return processo
+        return None
